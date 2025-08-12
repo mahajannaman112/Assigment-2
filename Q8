@@ -1,0 +1,8 @@
+def count_dist(arr):
+    uniq = []
+    for x in arr:
+        if x not in uniq:
+            uniq.append(x)
+    return len(uniq)
+nums = [1, 2, 2, 3, 4, 4, 5]
+print("distinct elements:", count_dist(nums))
