@@ -1,8 +1,27 @@
-def count_dist(arr):
-    uniq = []
-    for x in arr:
-        if x not in uniq:
-            uniq.append(x)
-    return len(uniq)
-nums = [1, 2, 2, 3, 4, 4, 5]
-print("distinct elements:", count_dist(nums))
+#include <iostream>
+#include <unordered_set>
+using namespace std;
+
+int main() {
+    int n;
+    cout << "Enter size of array: ";
+    cin >> n;
+
+    int arr[n];
+    cout << "Enter " << n << " elements:\n";
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+    }
+
+    unordered_set<int> distinctElements;
+
+    // Insert elements into the set (duplicates are ignored)
+    for (int i = 0; i < n; i++) {
+        distinctElements.insert(arr[i]);
+    }
+
+    cout << "Total number of distinct elements: " 
+         << distinctElements.size() << endl;
+
+    return 0;
+}
