@@ -1,29 +1,92 @@
-//part A: concat two strings
-s1 = "Hello"
-s2 = "World"
-s3 = s1 + s2
-print("Concatenated:", s3)
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <cctype> // For tolower()
+using namespace std;
 
-//part B: reverse a string
-txt = "hello"
-rev = txt[::-1]
-print("Reversed:", rev)
+// Function to check if a character is a vowel
+bool isVowel(char ch) {
+    ch = tolower(ch);
+    return (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u');
+}
 
-//part c: delete all vowels
-st = "Hello World"
-vowels = "aeiouAEIOU"
-res = ""
-for ch in st:
-    if ch not in vowels:
-        res += ch
-print("No vowels:", res)
+int main() {
+    int choice;
+    do {
+        cout << "\n=== String Operations Menu ===\n";
+        cout << "1. Concatenate one string to another\n";
+        cout << "2. Reverse a string\n";
+        cout << "3. Delete all vowels from a string\n";
+        cout << "4. Sort strings in alphabetical order\n";
+        cout << "5. Convert a character from uppercase to lowercase\n";
+        cout << "6. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore(); // Clear newline from input buffer
 
-//part d:sort strings alphabetically
-words = ["mango", "grapes", "banana", "apple","guava"]
-words.sort()
-print("Sorted:", words)
+        switch (choice) {
+        case 1: { // Concatenate strings
+            string str1, str2;
+            cout << "Enter first string: ";
+            getline(cin, str1);
+            cout << "Enter second string: ";
+            getline(cin, str2);
+            str1 += str2;
+            cout << "Concatenated string: " << str1 << endl;
+            break;
+        }
+        case 2: { // Reverse string
+            string str;
+            cout << "Enter a string: ";
+            getline(cin, str);
+            reverse(str.begin(), str.end());
+            cout << "Reversed string: " << str << endl;
+            break;
+        }
+        case 3: { // Delete vowels
+            string str, result = "";
+            cout << "Enter a string: ";
+            getline(cin, str);
+            for (char ch : str) {
+                if (!isVowel(ch)) {
+                    result += ch;
+                }
+            }
+            cout << "String without vowels: " << result << endl;
+            break;
+        }
+        case 4: { // Sort strings
+            int n;
+            cout << "Enter number of strings: ";
+            cin >> n;
+            cin.ignore();
+            string arr[100];
+            cout << "Enter " << n << " strings:\n";
+            for (int i = 0; i < n; i++) {
+                getline(cin, arr[i]);
+            }
+            sort(arr, arr + n);
+            cout << "Sorted strings:\n";
+            for (int i = 0; i < n; i++) {
+                cout << arr[i] << endl;
+            }
+            break;
+        }
+        case 5: { // Uppercase to lowercase
+            char ch;
+            cout << "Enter an uppercase character: ";
+            cin >> ch;
+            char lower = tolower(ch);
+            cout << "Lowercase character: " << lower << endl;
+            break;
+        }
+        case 6:
+            cout << "Exiting program...\n";
+            break;
+        default:
+            cout << "Invalid choice! Please try again.\n";
+        }
+    } while (choice != 6);
 
-//part e: upper to lower
-char = "A"
-low = char.lower()
-print("Lowercase:", low)
+    return 0;
+}
