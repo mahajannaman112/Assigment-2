@@ -1,0 +1,145 @@
+#include <iostream>
+using namespace std;
+
+struct Element {
+    int row, col, val;
+};
+
+class SparseMatrix {
+    Element *data;
+    int rows, cols, terms;  // terms = number of non-zero elements
+public:
+    SparseMatrix(int r, int c, int t) {
+        rows = r; cols = c; terms = t;
+        data = new Element[t];
+    }
+
+    void read() {
+        cout << "Enter row col value for " << terms << " non-zero elements:\n";
+        for (int i = 0; i < terms; i++) {
+            cin >> data[i].row >> data[i].col >> data[i].val;
+        }
+    }
+
+    void display() {
+        cout << "Row Col Val\n";
+        for (int i = 0; i < terms; i++) {
+            cout << data[i].row << " " << data[i].col << " " << data[i].val << endl;
+        }
+    }
+
+    // (a) Transpose
+    SparseMatrix transpose() {
+        SparseMatrix t(cols, rows, terms);
+        int k = 0;
+        for (int i = 0; i < cols; i++) {
+            for (int j = 0; j < terms; j++) {
+                if (data[j].col == i) {
+                    t.data[k].row = data[j].col;
+                    t.data[k].col = data[j].row;
+                    t.data[k].val = data[j].val;
+                    k++;
+                }
+            }
+        }
+        return t;
+    }
+
+    // (b) Addition
+    SparseMatrix add(SparseMatrix &s) {
+        if (rows != s.rows || cols != s.cols) {
+            cout << "Addition not possible\n";
+            return SparseMatrix(0,0,0);
+        }
+
+        SparseMatrix sum(rows, cols, terms + s.terms);
+        int i=0, j=0, k=0;
+        while (i < terms && j < s.terms) {
+            if (data[i].row == s.data[j].row && data[i].col == s.data[j].col) {
+                sum.data[k] = {data[i].row, data[i].col, data[i].val + s.data[j].val};
+                i++; j++; k++;
+            }
+            else if (data[i].row < s.data[j].row || 
+                     (data[i].row == s.data[j].row && data[i].col < s.data[j].col)) {
+                sum.data[k++] = data[i++];
+            } else {
+                sum.data[k++] = s.data[j++];
+            }
+        }
+        while (i < terms) sum.data[k++] = data[i++];
+        while (j < s.terms) sum.data[k++] = s.data[j++];
+
+        sum.terms = k;
+        return sum;
+    }
+
+    // (c) Multiplication
+    SparseMatrix multiply(SparseMatrix &s) {
+        if (cols != s.rows) {
+            cout << "Multiplication not possible\n";
+            return SparseMatrix(0,0,0);
+        }
+
+        SparseMatrix result(rows, s.cols, rows*s.cols); // worst case
+        int k = 0;
+        for (int i = 0; i < terms; i++) {
+            for (int j = 0; j < s.terms; j++) {
+                if (data[i].col == s.data[j].row) {
+                    int r = data[i].row;
+                    int c = s.data[j].col;
+                    int v = data[i].val * s.data[j].val;
+
+                    // check if (r,c) already exists in result
+                    bool found = false;
+                    for (int x = 0; x < k; x++) {
+                        if (result.data[x].row == r && result.data[x].col == c) {
+                            result.data[x].val += v;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        result.data[k++] = {r, c, v};
+                    }
+                }
+            }
+        }
+        result.terms = k;
+        return result;
+    }
+};
+
+// ---------------- Main ----------------
+int main() {
+    int r, c, t;
+
+    cout << "Enter rows, cols, and non-zero terms for matrix A: ";
+    cin >> r >> c >> t;
+    SparseMatrix A(r, c, t);
+    A.read();
+
+    cout << "Matrix A in triplet form:\n";
+    A.display();
+
+    cout << "\nTranspose of A:\n";
+    SparseMatrix T = A.transpose();
+    T.display();
+
+    cout << "\nEnter rows, cols, and non-zero terms for matrix B: ";
+    cin >> r >> c >> t;
+    SparseMatrix B(r, c, t);
+    B.read();
+
+    cout << "Matrix B in triplet form:\n";
+    B.display();
+
+    cout << "\nA + B:\n";
+    SparseMatrix Sum = A.add(B);
+    Sum.display();
+
+    cout << "\nA * B:\n";
+    SparseMatrix Prod = A.multiply(B);
+    Prod.display();
+
+    return 0;
+}
